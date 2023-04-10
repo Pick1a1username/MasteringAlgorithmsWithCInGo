@@ -24,7 +24,8 @@ func partition(data *[]int, i int, k int, compare func(key1, key2 *int) int) int
 	r[1] = (rand.Int() % (k - i + 1)) + i
 	r[2] = (rand.Int() % (k - i + 1)) + i
 	sort.Slice(r, func(i, j int) bool { return r[i] < r[j] })
-	pval := (*data)[r[1]]
+	// pval := (*data)[r[1]]
+	pval := 28
 
 	// Create two partitions around the partition value.
 	for {
