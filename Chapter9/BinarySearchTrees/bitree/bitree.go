@@ -99,7 +99,6 @@ func BiTreeDestroy[T any](tree *BiTree[T]) {
 // Return -1 if there's something wrong.
 // Return 0 if insertion is successful.
 func BiTreeInsLeft[T any](tree *BiTree[T], node *BiTreeNode[T], data *T) int {
-	var newNode *BiTreeNode[T] = nil
 	var position **BiTreeNode[T] = nil
 
 	// Determine where to insert the node.
@@ -117,7 +116,7 @@ func BiTreeInsLeft[T any](tree *BiTree[T], node *BiTreeNode[T], data *T) int {
 		position = &node.Left
 	}
 	// Allocate storage for the node.
-	newNode = &BiTreeNode[T]{}
+	newNode := &BiTreeNode[T]{}
 
 	// Insert the node into the tree.
 	newNode.Data = data
@@ -134,7 +133,6 @@ func BiTreeInsLeft[T any](tree *BiTree[T], node *BiTreeNode[T], data *T) int {
 // Return -1 if there's something wrong.
 // Return 0 if insertion is successful.
 func BiTreeInsRight[T any](tree *BiTree[T], node *BiTreeNode[T], data *T) int {
-	var newNode *BiTreeNode[T] = nil
 	var position **BiTreeNode[T] = nil
 
 	// Determine where to insert the node.
@@ -152,7 +150,7 @@ func BiTreeInsRight[T any](tree *BiTree[T], node *BiTreeNode[T], data *T) int {
 		position = &node.Right
 	}
 	// Allocate storage for the node.
-	newNode = &BiTreeNode[T]{}
+	newNode := &BiTreeNode[T]{}
 
 	// Insert the node into the tree.
 	newNode.Data = data
