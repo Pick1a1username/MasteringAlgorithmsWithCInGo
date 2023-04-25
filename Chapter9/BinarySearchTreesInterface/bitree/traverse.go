@@ -1,8 +1,8 @@
 package bitree
 
-import l "BinarySearchTreesGeneric/list"
+import l "BinarySearchTreesInterface/list"
 
-func Preorder[T any](node *BiTreeNode[T], list *l.List[T]) int {
+func Preorder(node *BiTreeNode, list *l.List) int {
 	// Load the list with a preorder listing of the tree.
 	if node != nil {
 		if l.ListInsNext(list, list.Tail, node.Data) != 0 {
@@ -22,7 +22,7 @@ func Preorder[T any](node *BiTreeNode[T], list *l.List[T]) int {
 	return 0
 }
 
-func Inorder[T any](node *BiTreeNode[T], list *l.List[T]) int {
+func Inorder(node *BiTreeNode, list *l.List) int {
 	// Load the list with an inorder listing of the tree.
 	if node != nil {
 		if node.Left != nil {
@@ -42,7 +42,7 @@ func Inorder[T any](node *BiTreeNode[T], list *l.List[T]) int {
 	return 0
 }
 
-func Postorder[T any](node *BiTreeNode[T], list *l.List[T]) int {
+func Postorder(node *BiTreeNode, list *l.List) int {
 	// Load the list with a postorder listing of the tree.
 	if node != nil {
 		if node.Left != nil {

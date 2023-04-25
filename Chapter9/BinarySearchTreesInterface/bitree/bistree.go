@@ -10,23 +10,22 @@ const (
 )
 
 // Define a structure for nodes in AVL trees.
-type AvlNode[T any] struct {
-	Data   *T
+type AvlNode struct {
+	Data   interface{}
 	Hidden int
 	Factor int
 }
 
-// generic type cannot be alias
-// type BisTree[T any] = BiTree[T]
+type BisTree = BiTree
 
-func rotateLeft[T any](node **BiTreeNode[AvlNode[T]]) {
+func rotateLeft(node **BiTreeNode) {
 	left := (*node).Left
-	if left.Data.Factor == AvlLftHeavy {
+	if left.Data.(*AvlNode).Factor == AvlLftHeavy {
 		// Perform an LL rotation.
 		(*node).Left = left.Right
 		left.Right = *node
-		(*node).Data.Factor = AvlBalanced
-		left.Data.Factor = AvlBalanced
+		(*node).Data.(*AvlNode).Factor = AvlBalanced
+		left.Data.(*AvlNode).Factor = AvlBalanced
 		*node = left
 	} else {
 		// Perform an LR rotation.
@@ -36,32 +35,32 @@ func rotateLeft[T any](node **BiTreeNode[AvlNode[T]]) {
 		(*node).Left = grandChild.Right
 		grandChild.Right = *node
 
-		switch grandChild.Data.Factor {
+		switch grandChild.Data.(*AvlNode).Factor {
 		case AvlLftHeavy:
-			(*node).Data.Factor = AvlRgtHeavy
-			left.Data.Factor = AvlBalanced
+			(*node).Data.(*AvlNode).Factor = AvlRgtHeavy
+			left.Data.(*AvlNode).Factor = AvlBalanced
 		case AvlBalanced:
-			(*node).Data.Factor = AvlBalanced
-			left.Data.Factor = AvlBalanced
+			(*node).Data.(*AvlNode).Factor = AvlBalanced
+			left.Data.(*AvlNode).Factor = AvlBalanced
 		case AvlRgtHeavy:
-			(*node).Data.Factor = AvlBalanced
-			left.Data.Factor = AvlLftHeavy
+			(*node).Data.(*AvlNode).Factor = AvlBalanced
+			left.Data.(*AvlNode).Factor = AvlLftHeavy
 		default:
-			panic(fmt.Sprintf("unexpected Factor: %d", grandChild.Data.Factor))
+			panic(fmt.Sprintf("unexpected Factor: %d", grandChild.Data.(*AvlNode).Factor))
 		}
-		grandChild.Data.Factor = AvlBalanced
+		grandChild.Data.(*AvlNode).Factor = AvlBalanced
 		*node = grandChild
 	}
 }
 
-func rotateRight[T any](node **BiTreeNode[AvlNode[T]]) {
+func rotateRight(node **BiTreeNode) {
 	right := (*node).Right
-	if right.Data.Factor == AvlRgtHeavy {
+	if right.Data.(*AvlNode).Factor == AvlRgtHeavy {
 		// Perform an RR rotation.
 		(*node).Right = right.Left
 		right.Left = *node
-		(*node).Data.Factor = AvlBalanced
-		right.Data.Factor = AvlBalanced
+		(*node).Data.(*AvlNode).Factor = AvlBalanced
+		right.Data.(*AvlNode).Factor = AvlBalanced
 		*node = right
 	} else {
 		// Perform an RL rotation.
@@ -71,26 +70,26 @@ func rotateRight[T any](node **BiTreeNode[AvlNode[T]]) {
 		(*node).Right = grandChild.Left
 		grandChild.Left = *node
 
-		switch grandChild.Data.Factor {
+		switch grandChild.Data.(*AvlNode).Factor {
 		case AvlLftHeavy:
-			(*node).Data.Factor = AvlBalanced
-			right.Data.Factor = AvlRgtHeavy
+			(*node).Data.(*AvlNode).Factor = AvlBalanced
+			right.Data.(*AvlNode).Factor = AvlRgtHeavy
 		case AvlBalanced:
-			(*node).Data.Factor = AvlBalanced
-			right.Data.Factor = AvlBalanced
+			(*node).Data.(*AvlNode).Factor = AvlBalanced
+			right.Data.(*AvlNode).Factor = AvlBalanced
 		case AvlRgtHeavy:
-			(*node).Data.Factor = AvlLftHeavy
-			right.Data.Factor = AvlBalanced
+			(*node).Data.(*AvlNode).Factor = AvlLftHeavy
+			right.Data.(*AvlNode).Factor = AvlBalanced
 		default:
-			panic(fmt.Sprintf("unexpected Factor: %d", grandChild.Data.Factor))
+			panic(fmt.Sprintf("unexpected Factor: %d", grandChild.Data.(*AvlNode).Factor))
 		}
-		grandChild.Data.Factor = AvlBalanced
+		grandChild.Data.(*AvlNode).Factor = AvlBalanced
 		*node = grandChild
 	}
 }
 
-func destroyLeft[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]]) {
-	var position **BiTreeNode[AvlNode[T]]
+func destroyLeft(tree *BisTree, node *BiTreeNode) {
+	var position **BiTreeNode
 	// Do not allow destruction of an empty tree.
 	if tree.Size == 0 {
 		return
@@ -107,8 +106,7 @@ func destroyLeft[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]]) 
 		destroyRight(tree, *position)
 		if tree.Destroy != nil {
 			// Call a user-defined function to free dynamically allocated data.
-			// AvlNode[T] passed instead of T.
-			tree.Destroy((*position).Data)
+			tree.Destroy((*position).Data.(*AvlNode).Data)
 		}
 		// Free the AVL data in the node, then free the node itself.
 		(*position).Data = nil
@@ -118,8 +116,8 @@ func destroyLeft[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]]) 
 	}
 }
 
-func destroyRight[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]]) {
-	var position **BiTreeNode[AvlNode[T]]
+func destroyRight(tree *BisTree, node *BiTreeNode) {
+	var position **BiTreeNode
 	// Do not allow destruction of an empty tree.
 	if tree.Size == 0 {
 		return
@@ -136,8 +134,7 @@ func destroyRight[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]])
 		destroyRight(tree, *position)
 		if tree.Destroy != nil {
 			// Call a user-defined function to free dynamically allocated data.
-			// AvlNode[T] passed instead of T.
-			tree.Destroy((*position).Data)
+			tree.Destroy((*position).Data.(*AvlNode).Data)
 		}
 		// Free the AVL data in the node, then free the node itself.
 		(*position).Data = nil
@@ -147,17 +144,17 @@ func destroyRight[T any](tree *BiTree[AvlNode[T]], node *BiTreeNode[AvlNode[T]])
 	}
 }
 
-// Todo
-func insert[T any](tree *BiTree[AvlNode[T]], node **BiTreeNode[AvlNode[T]], data *T, balanced *int) int {
+func insert(tree *BisTree, node **BiTreeNode, data interface{}, balanced *int) int {
 	// Insert the data into the tree.
 	if *node != nil {
 		// Handle insertion into an empty tree.
-		avlData := AvlNode[T]{
+		avlData := AvlNode{
 			Factor: AvlBalanced,
 			Hidden: 0,
 			Data:   data,
 		}
-		return BiTreeInsLeft(tree, *node, &avlData)
+
+		return BiTreeInsLeft(tree, *node, avlData)
 	} else {
 		// Todo
 	}
