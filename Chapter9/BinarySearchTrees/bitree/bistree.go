@@ -154,5 +154,17 @@ func destroyRight[T any](tree *BisTree[T], node *BiTreeNode[AvlNode[T]]) {
 
 // Todo
 func insert[T any](tree *BisTree[T], node **BiTreeNode[AvlNode[T]], data *T, balanced *int) int {
+	// Insert the data into the tree.
+	if *node != nil {
+		// Handle insertion into an empty tree.
+		avlData := AvlNode[T]{
+			Factor: AvlBalanced,
+			Hidden: 0,
+			Data:   data,
+		}
+
+		return BiTreeInsLeft[T](tree, *node, avlData)
+
+	}
 	return 0
 }
